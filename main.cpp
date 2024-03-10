@@ -11,7 +11,6 @@
 // Clean texturing code
 
 
-
 const int WIDTH = 512, HEIGHT = 512;
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
@@ -157,9 +156,7 @@ void drawMap(){
         if(currentTileX > 7) inMap = false;
        
 
-
       SDL_Rect currentTileDimensions {currentSquareX, currentSquareY,64,64};
-
 
         // out of range -> brick
         // 0 -> background screen
@@ -194,9 +191,6 @@ void drawMap(){
     }
   }
 }
-
-
-
 
 // command to compile
 // g++ main.cpp -IC:\Dev\SDL2-2.30.0\i686-w64-mingw32\include\SDL2 -LC:\Dev\SDL2-2.30.0\i686-w64-mingw32\lib -lmingw32 -lSDL2main -lSDL2 -o 01_hello_SDL
