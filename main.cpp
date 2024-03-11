@@ -11,17 +11,18 @@
 // Clean texturing code
 
 
-const int WIDTH = 512, HEIGHT = 512;
+const int WIDTH = 512, HEIGHT = 512, middleOfScreen = 192;
+
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
-bool running;
+bool running = true;
 int playerX = 0 ,  playerY = 0;
 SDL_Texture* playerTex = nullptr;
 SDL_Surface* tmpSurface = nullptr;
 SDL_Texture* atlasTex = nullptr;
 
 // length of x is important for rendering maths.
-// x = 16 (formerly 8)
+// x = 16 
 int mapX = 8;
 int mapY = 8;
 int fullMap[] ={0,0,0,0,0,0,0,0,
@@ -50,52 +51,24 @@ void populateMap(){
 
 void drawMap();
 void drawPlayer();
+void handleKeyboardInput(SDL_Event e);
 
 
 int main(int argc, char** args) {
   populateMap(); // Easiest way to switch maps for testing
-  playerX = 0, playerY = 0;
   SDL_Event e;
   SDL_Init(SDL_INIT_EVERYTHING);
-  running = true;
 
   SDL_CreateWindowAndRenderer(448,448,0, &window,&renderer);
+  // tmpSurface = IMG_Load("Atlas3.png");
 
   while(running){
-    // TODO: Move keyboard logic to its own function if possible
     while(SDL_PollEvent(&e)){
       if(e.type == SDL_QUIT){
         running = false;
       }
       else if(e.type == SDL_KEYDOWN){
-      // Need to check out of bounds
-        switch(e.key.keysym.sym){
-          int nextCoords;
-          case SDLK_RIGHT:
-              nextCoords = playerY*mapX+playerX+1;
-              if(map[nextCoords]==0 && playerX < mapX -1){
-                    playerX += 1;
-              }
-             break;
-          case SDLK_LEFT:
-              nextCoords = playerY*mapX+playerX-1;
-              if(map[nextCoords]==0 && playerX > 0){
-                    playerX -= 1;
-              }
-              break;
-          case SDLK_UP:
-              nextCoords = (playerY-1)*mapX+playerX;
-              if(map[nextCoords]==0 && playerY > 0){
-                    playerY -= 1;
-              }
-              break;
-           case SDLK_DOWN:
-              nextCoords = (playerY+1)*mapX+playerX;
-              if(map[nextCoords]==0 && playerY < mapY -1){
-                    playerY += 1;
-              } 
-              break;
-        }
+        handleKeyboardInput(e);
       }
     }
 
@@ -112,16 +85,48 @@ int main(int argc, char** args) {
 
   SDL_RenderPresent(renderer);
   SDL_FreeSurface(tmpSurface);
-  
   }
   return 0;
 }
 
+// Handle user input
+void handleKeyboardInput(SDL_Event e){
+   int nextCoords;
+  switch(e.key.keysym.sym){
+    case SDLK_RIGHT:
+              nextCoords = playerY*mapX+playerX+1;
+              if(map[nextCoords]==0 && playerX < mapX -1){
+                    playerX += 1;
+              }
+             break;
+    case SDLK_LEFT:
+              nextCoords = playerY*mapX+playerX-1;
+              if(map[nextCoords]==0 && playerX > 0){
+                    playerX -= 1;
+              }
+              break;
+    case SDLK_UP:
+              nextCoords = (playerY-1)*mapX+playerX;
+              if(map[nextCoords]==0 && playerY > 0){
+                    playerY -= 1;
+              }
+              break;
+    case SDLK_DOWN:
+              nextCoords = (playerY+1)*mapX+playerX;
+              if(map[nextCoords]==0 && playerY < mapY -1){
+                    playerY += 1;
+              } 
+              break;
+  }
+
+}
+
+// Rendering
 
 void drawPlayer(){
   playerTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 
-  int middleOfScreen = 192; // player should always be at middle of screen
+  // int middleOfScreen = 192; // player should always be at middle of screen
   SDL_Rect player {middleOfScreen,middleOfScreen,64,64}; // not deprected (yet)
   SDL_Rect playerAtlasCoords {0, 256,256,256};
 
@@ -139,7 +144,7 @@ void drawMap(){
     for(int j = -2; j <3;j++){
       atlasTex = SDL_CreateTextureFromSurface(renderer, tmpSurface); // try to move?
       if(!(i == 0 && j == 0)){ // i.e. if not player position (middle of screen)
-        int middleOfScreen = 192;
+        // int middleOfScreen = 192;
         int currentSquareX = middleOfScreen + (i *64); // change var name, maybe tileScreenCoords?
         int currentSquareY = middleOfScreen + (j *64);
 
@@ -148,12 +153,9 @@ void drawMap(){
         int currentTileY = (playerY +j);
         int currentTile = currentTileY*mapX+currentTileX;
 
-
+        
         bool inMap = true;
-        if(currentTileY < 0) inMap = false;
-        if(currentTileY > 7) inMap = false;
-        if(currentTileX < 0) inMap = false;
-        if(currentTileX > 7) inMap = false;
+        if(currentTileX > 7 || currentTileX < 0 || currentTileY > 7 || currentTileY < 0) inMap = false;
        
 
       SDL_Rect currentTileDimensions {currentSquareX, currentSquareY,64,64};
@@ -186,6 +188,7 @@ void drawMap(){
           SDL_Rect brickAtlasCoords {256, 256,256,256};
           SDL_RenderCopy(renderer,atlasTex,&brickAtlasCoords,&currentTileDimensions);
       }
+      // Free space here.
       SDL_DestroyTexture(atlasTex);
     }
     }
