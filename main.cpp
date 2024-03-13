@@ -5,10 +5,9 @@
 #include <SDL.h>
 #include <stdarg.h>
 #include <SDL_image.h>
+#include <memory>
 
 // TODO
-// Sort out Image dll
-// Clean texturing code
 
 
 const int WIDTH = 512, HEIGHT = 512, middleOfScreen = 192;
@@ -17,7 +16,6 @@ SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 bool running = true;
 int playerX = 0 ,  playerY = 0;
-SDL_Texture* playerTex = nullptr;
 SDL_Surface* tmpSurface = nullptr;
 SDL_Texture* atlasTex = nullptr;
 
@@ -77,10 +75,8 @@ int main(int argc, char** args) {
   SDL_RenderClear(renderer);
   tmpSurface = IMG_Load("Atlas3.png");
 
-  // Maybe an initialise / load textures function
   drawMap();
   drawPlayer();
-  // Then destroy textures function?
 
 
   SDL_RenderPresent(renderer);
@@ -124,7 +120,7 @@ void handleKeyboardInput(SDL_Event e){
 // Rendering
 
 void drawPlayer(){
-  playerTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+  atlasTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
 
   // int middleOfScreen = 192; // player should always be at middle of screen
   SDL_Rect player {middleOfScreen,middleOfScreen,64,64}; // not deprected (yet)
@@ -133,8 +129,8 @@ void drawPlayer(){
   // Need to manipulate player coords
   player.x = middleOfScreen;
   player.y = middleOfScreen;
-  SDL_RenderCopy(renderer,playerTex,&playerAtlasCoords,&player);
-  SDL_DestroyTexture(playerTex);
+  SDL_RenderCopy(renderer,atlasTex,&playerAtlasCoords,&player);
+  SDL_DestroyTexture(atlasTex);
 }
 
 
@@ -188,9 +184,8 @@ void drawMap(){
           SDL_Rect brickAtlasCoords {256, 256,256,256};
           SDL_RenderCopy(renderer,atlasTex,&brickAtlasCoords,&currentTileDimensions);
       }
-      // Free space here.
-      SDL_DestroyTexture(atlasTex);
     }
+      SDL_DestroyTexture(atlasTex);
     }
   }
 }
