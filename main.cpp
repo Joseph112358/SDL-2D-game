@@ -8,9 +8,9 @@
 #include <memory>
 
 // Ideas to implement
-// A player sprite with animations
-// A coin system (kinda like snake)
 // Cool floor pattern?
+// Show score
+// Maybe outline should be like an arcade machine
 
 
 const int WIDTH = 512, HEIGHT = 512, middleOfScreen = 192;
@@ -19,15 +19,19 @@ SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 bool running = true;
 int playerX = 0 ,  playerY = 0;
+std::string playerDirection = "right";
+int cakeLocation = 5;
+int score = 0;
 SDL_Surface* tmpSurface = nullptr;
 SDL_Texture* atlasTex = nullptr;
 SDL_Texture* playerTex = nullptr;
+SDL_Texture* cakeTex = nullptr;
 
 // length of x is important for rendering maths.
 // x = 16 
 int mapX = 8;
 int mapY = 8;
-int fullMap[] ={0,0,0,0,0,0,0,0,
+int fullMap[64] ={0,0,0,0,0,0,0,0,
                 0,0,0,0,0,0,0,0,
                 0,0,0,0,0,0,0,0,
                 0,0,0,2,0,2,3,0,
@@ -44,16 +48,19 @@ int emptyMap[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 };
 
-int map[sizeof(fullMap)];
+int map[64];
 
 void populateMap(){
     std::memcpy(map,fullMap, sizeof(map));
 }
 
-
+void handleKeyboardInput(SDL_Event e);
 void drawMap();
 void drawPlayer();
-void handleKeyboardInput(SDL_Event e);
+void drawCakes();
+void checkCakeCollision();
+void newCake();
+void drawScore();
 
 
 int main(int argc, char** args) {
@@ -63,6 +70,7 @@ int main(int argc, char** args) {
 
   SDL_CreateWindowAndRenderer(448,448,0, &window,&renderer);
   // tmpSurface = IMG_Load("Atlas3.png");
+  // drawCakes();
 
   while(running){
     while(SDL_PollEvent(&e)){
@@ -81,8 +89,18 @@ int main(int argc, char** args) {
   tmpSurface = IMG_Load("Atlas3.png");
   drawMap();
   SDL_FreeSurface(tmpSurface);
-  tmpSurface = IMG_Load("kid-with-balloon.png");
+
+  tmpSurface = IMG_Load("cake-candle-sprite.png");
+  drawCakes();
+  SDL_FreeSurface(tmpSurface);
+
+  checkCakeCollision();
+
+  tmpSurface = IMG_Load("kid-with-balloon-2.png");
   drawPlayer();
+  // SDL_FreeSurface(tmpSurface);
+  // tmpSurface = IMG_Load("cake-candle-sprite.png");
+  // drawCakes();
 
   SDL_RenderPresent(renderer);
   SDL_FreeSurface(tmpSurface);
@@ -98,12 +116,14 @@ void handleKeyboardInput(SDL_Event e){
               nextCoords = playerY*mapX+playerX+1;
               if(map[nextCoords]==0 && playerX < mapX -1){
                     playerX += 1;
+                    playerDirection = "right";
               }
              break;
     case SDLK_LEFT:
               nextCoords = playerY*mapX+playerX-1;
               if(map[nextCoords]==0 && playerX > 0){
                     playerX -= 1;
+                    playerDirection = "left";
               }
               break;
     case SDLK_UP:
@@ -126,6 +146,12 @@ void handleKeyboardInput(SDL_Event e){
 
 void drawPlayer(){
   playerTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+  SDL_Rect playerSpriteCoords;
+  if(playerDirection == "right"){
+    playerSpriteCoords = {0, 0, 64, 64};
+  } else {
+    playerSpriteCoords = {64, 0, 64, 64};
+  }
 
   // int middleOfScreen = 192; // player should always be at middle of screen
   SDL_Rect player {middleOfScreen,middleOfScreen,64,64}; // not deprected (yet)
@@ -134,7 +160,7 @@ void drawPlayer(){
   // Need to manipulate player coords
   player.x = middleOfScreen;
   player.y = middleOfScreen;
-  SDL_RenderCopy(renderer,playerTex,NULL,&player);
+  SDL_RenderCopy(renderer,playerTex, &playerSpriteCoords,&player);
   SDL_DestroyTexture(playerTex);
 }
 
@@ -191,6 +217,40 @@ void drawMap(){
       SDL_DestroyTexture(atlasTex);
     }
   }
+}
+
+void drawCakes(){
+  // Where is the cake?
+  int cakeX = (cakeLocation % mapX);
+  int cakeY = (cakeLocation / mapY);
+  int differenceX = cakeX - playerX;
+  int differenceY = cakeY - playerY;
+  // Is it in range / site ? (should it be drawn)
+  if(abs(differenceX) < 3 && abs(differenceY) < 3){
+  cakeTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+
+  // Add 3 to both becasue map is always 3 * 3 tiles in from screen.
+  SDL_Rect cakeDimensions {(3 + differenceX) * 64 ,( 3 + differenceY) * 64,64,64};
+  SDL_RenderCopy(renderer,cakeTex,NULL,&cakeDimensions);
+  SDL_DestroyTexture(cakeTex);
+  }
+  
+}
+
+void checkCakeCollision(){
+  if(cakeLocation == playerX + mapX*playerY){
+    score ++;
+    std::cout << score << std::endl;
+    newCake();
+  }
+}
+
+void newCake(){
+    int newCakelocation = rand() %64;
+    while(map[newCakelocation] != 0){
+      newCakelocation = rand() %64;
+    }
+    cakeLocation = newCakelocation;
 }
 
 // command to compile
