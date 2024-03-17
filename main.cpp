@@ -86,24 +86,13 @@ int main(int argc, char** args) {
   SDL_SetRenderDrawColor(renderer,0,0,0,255); // set background color to black
   SDL_RenderClear(renderer);
 
-  tmpSurface = IMG_Load("Atlas3.png");
+ 
   drawMap();
-  SDL_FreeSurface(tmpSurface);
-
-  tmpSurface = IMG_Load("cake-candle-sprite.png");
   drawCakes();
-  SDL_FreeSurface(tmpSurface);
-
   checkCakeCollision();
-
-  tmpSurface = IMG_Load("kid-with-balloon-2.png");
   drawPlayer();
-  // SDL_FreeSurface(tmpSurface);
-  // tmpSurface = IMG_Load("cake-candle-sprite.png");
-  // drawCakes();
-
+  
   SDL_RenderPresent(renderer);
-  SDL_FreeSurface(tmpSurface);
   }
   return 0;
 }
@@ -145,6 +134,7 @@ void handleKeyboardInput(SDL_Event e){
 // Rendering
 
 void drawPlayer(){
+  tmpSurface = IMG_Load("kid-with-balloon-2.png");
   playerTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
   SDL_Rect playerSpriteCoords;
   if(playerDirection == "right"){
@@ -162,11 +152,13 @@ void drawPlayer(){
   player.y = middleOfScreen;
   SDL_RenderCopy(renderer,playerTex, &playerSpriteCoords,&player);
   SDL_DestroyTexture(playerTex);
+  SDL_FreeSurface(tmpSurface);
 }
 
 
 // Work out where to draw, then what to draw.
 void drawMap(){
+  tmpSurface = IMG_Load("Atlas3.png");
   for(int i = -2; i <3; i++){
     for(int j = -2; j <3;j++){
       atlasTex = SDL_CreateTextureFromSurface(renderer, tmpSurface); // try to move?
@@ -217,9 +209,11 @@ void drawMap(){
       SDL_DestroyTexture(atlasTex);
     }
   }
+  SDL_FreeSurface(tmpSurface);
 }
 
 void drawCakes(){
+  tmpSurface = IMG_Load("cake-candle-sprite.png");
   // Where is the cake?
   int cakeX = (cakeLocation % mapX);
   int cakeY = (cakeLocation / mapY);
@@ -234,7 +228,7 @@ void drawCakes(){
   SDL_RenderCopy(renderer,cakeTex,NULL,&cakeDimensions);
   SDL_DestroyTexture(cakeTex);
   }
-  
+  SDL_FreeSurface(tmpSurface);
 }
 
 void checkCakeCollision(){
