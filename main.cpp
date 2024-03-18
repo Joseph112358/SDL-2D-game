@@ -7,11 +7,6 @@
 #include <SDL_image.h>
 #include <memory>
 
-// Ideas to implement
-// Cool floor pattern?
-// Show score
-// Maybe outline should be like an arcade machine
-
 
 const int WIDTH = 512, HEIGHT = 512, middleOfScreen = 192;
 
