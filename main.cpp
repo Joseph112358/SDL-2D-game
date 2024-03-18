@@ -64,10 +64,17 @@ int main(int argc, char** args) {
   SDL_Init(SDL_INIT_EVERYTHING);
 
   SDL_CreateWindowAndRenderer(448,448,0, &window,&renderer);
-  // tmpSurface = IMG_Load("Atlas3.png");
-  // drawCakes();
+
+  const int FPS = 60;
+  const int frameDelay = 1000 / FPS;
+
+  Uint32 frameStart;
+  int frameTime;
 
   while(running){
+
+    frameStart = SDL_GetTicks();
+
     while(SDL_PollEvent(&e)){
       if(e.type == SDL_QUIT){
         running = false;
@@ -81,13 +88,19 @@ int main(int argc, char** args) {
   SDL_SetRenderDrawColor(renderer,0,0,0,255); // set background color to black
   SDL_RenderClear(renderer);
 
- 
   drawMap();
-  drawCakes();
+  // drawCakes();
   checkCakeCollision();
+  drawCakes();
   drawPlayer();
   
   SDL_RenderPresent(renderer);
+
+  frameTime = SDL_GetTicks() - frameStart;
+
+  if(frameDelay > frameTime){
+    SDL_Delay(frameDelay - frameTime);
+  }
   }
   return 0;
 }
