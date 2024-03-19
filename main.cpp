@@ -21,6 +21,7 @@ SDL_Surface* tmpSurface = nullptr;
 SDL_Texture* atlasTex = nullptr;
 SDL_Texture* playerTex = nullptr;
 SDL_Texture* cakeTex = nullptr;
+SDL_Texture* scoreTex = nullptr;
 
 // length of x is important for rendering maths.
 // x = 16 
@@ -93,6 +94,7 @@ int main(int argc, char** args) {
   checkCakeCollision();
   drawCakes();
   drawPlayer();
+  drawScore();
   
   SDL_RenderPresent(renderer);
 
@@ -253,6 +255,23 @@ void newCake(){
       newCakelocation = rand() %64;
     }
     cakeLocation = newCakelocation;
+}
+
+// The score atlas is wrong -> start at 0
+void drawScore(){
+  if(score > 10) return;
+  tmpSurface = IMG_Load("numbers-sprite-01.png");
+  scoreTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
+  int atlasX = score % 5;
+  int atlasY = score / 5;
+  SDL_Rect numberAtlasCoords {atlasX *32, atlasY * 32,32,32};
+  SDL_Rect scoreLocation {384, 384,64,64};
+  SDL_RenderCopy(renderer,scoreTex,&numberAtlasCoords,&scoreLocation);
+  //  SDL_RenderCopy(renderer,playerTex, &playerSpriteCoords,&player);
+
+  SDL_DestroyTexture(scoreTex);
+  SDL_FreeSurface(tmpSurface);
+  
 }
 
 // command to compile

@@ -20,7 +20,10 @@ Level ideas, find the cake slices? ->
 Level 2 repair animatronics?
 
 TODO:
-Show score on UI
 Detail room with chairs and tables,
 Add NPC's
 Create Level 2 once basic functionality is fleshed out more.
+
+Retrospective (WIP)
+
+Whilst the rendering system I have used works (and was mostly desgined myself). It is not scalable or optimal
