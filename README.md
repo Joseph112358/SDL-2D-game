@@ -1,6 +1,7 @@
 Welcome to my C++ SDL game!
 
-Tl;dr: This is my 2D, SDL game loosely inspired by some of the Five Nights at Freddy's minigames 
+Tl;dr: This is my 2D, SDL game. I'm mainly just using it to learn and prototype concepts for now. I might choose
+To implement / flesh out these ideas in a custom SDL game engine, or use an existing game engine such as Monogame or godot.
 
 Technology used
 Written in C++ (Mingw compiler) with the SDL2 graphics library
@@ -20,9 +21,12 @@ Level ideas, find the cake slices? ->
 Level 2 repair animatronics?
 
 TODO:
-Detail room with chairs and tables,
-Add NPC's
-Create Level 2 once basic functionality is fleshed out more.
+* Create a level class / data object to store level data (room layout etc)
+* Migrate static arrays to dynamic array (vector probably)
+* Create 2 rooms / levels -> one outside farming game, one inside (existing room)
+* Detail room with chairs and tables,
+* Add NPC's
+* Create Level 2 once basic functionality is fleshed out more.
 
 Retrospective (WIP)
 

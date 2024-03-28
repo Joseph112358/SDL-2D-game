@@ -6,7 +6,7 @@
 #include <stdarg.h>
 #include <SDL_image.h>
 #include <memory>
-
+#include "Level.h"
 
 const int WIDTH = 512, HEIGHT = 512, middleOfScreen = 192;
 
@@ -60,6 +60,8 @@ void drawScore();
 
 
 int main(int argc, char** args) {
+  Level levelJoe = Level();
+  levelJoe.test();
   populateMap(); // Easiest way to switch maps for testing
   SDL_Event e;
   SDL_Init(SDL_INIT_EVERYTHING);
@@ -90,7 +92,6 @@ int main(int argc, char** args) {
   SDL_RenderClear(renderer);
 
   drawMap();
-  // drawCakes();
   checkCakeCollision();
   drawCakes();
   drawPlayer();
