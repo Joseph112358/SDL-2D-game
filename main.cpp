@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <SDL_image.h>
 #include <memory>
+#include <vector>
 #include "Level.h"
 
 const int WIDTH = 512, HEIGHT = 512, middleOfScreen = 192;
@@ -22,6 +23,7 @@ SDL_Texture* atlasTex = nullptr;
 SDL_Texture* playerTex = nullptr;
 SDL_Texture* cakeTex = nullptr;
 SDL_Texture* scoreTex = nullptr;
+Level* levelOne = nullptr;
 
 // length of x is important for rendering maths.
 // x = 16 
@@ -57,11 +59,13 @@ void drawCakes();
 void checkCakeCollision();
 void newCake();
 void drawScore();
+void loadLevels();
+void loadLevelOne();
 
 
 int main(int argc, char** args) {
-  Level levelJoe = Level();
-  levelJoe.test();
+  loadLevels();
+  levelOne->test();
   populateMap(); // Easiest way to switch maps for testing
   SDL_Event e;
   SDL_Init(SDL_INIT_EVERYTHING);
@@ -273,6 +277,34 @@ void drawScore(){
   SDL_DestroyTexture(scoreTex);
   SDL_FreeSurface(tmpSurface);
   
+}
+
+// Extract?
+void loadLevels(){
+  loadLevelOne();
+}
+
+void loadLevelOne(){
+  std::vector<int> floorMap = 
+ {0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,2,0,2,3,0,
+  0,0,0,1,0,1,0,0,
+  0,0,0,1,0,1,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0};
+
+   std::vector<int> itemMap = 
+ {0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0};
+  levelOne = new Level(8,8, floorMap, itemMap);
 }
 
 // command to compile

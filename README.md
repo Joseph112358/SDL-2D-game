@@ -23,10 +23,10 @@ Level 2 repair animatronics?
 TODO:
 * Create a level class / data object to store level data (room layout etc)
 * Migrate static arrays to dynamic array (vector probably)
-* Create 2 rooms / levels -> one outside farming game, one inside (existing room)
+* Clean / order code: create res folder etc
+* Create 2 levels (level 2 will be farming game)
 * Detail room with chairs and tables,
 * Add NPC's
-* Create Level 2 once basic functionality is fleshed out more.
 
 Retrospective (WIP)
 
