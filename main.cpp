@@ -24,33 +24,13 @@ SDL_Texture* playerTex = nullptr;
 SDL_Texture* cakeTex = nullptr;
 SDL_Texture* scoreTex = nullptr;
 Level* levelOne = nullptr;
+Level* currentLevel = nullptr;
 
 // length of x is important for rendering maths.
 // x = 16 
 int mapX = 8;
 int mapY = 8;
-int fullMap[64] ={0,0,0,0,0,0,0,0,
-                0,0,0,0,0,0,0,0,
-                0,0,0,0,0,0,0,0,
-                0,0,0,2,0,2,3,0,
-                0,0,0,1,0,1,0,0,
-                0,0,0,1,0,1,0,0,
-                0,0,0,0,0,0,0,0,
-                0,0,0,0,0,0,0,0
-              };
 
-int emptyMap[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-};
-
-int map[64];
-
-void populateMap(){
-    std::memcpy(map,fullMap, sizeof(map));
-}
 
 void handleKeyboardInput(SDL_Event e);
 void drawMap();
@@ -65,8 +45,7 @@ void loadLevelOne();
 
 int main(int argc, char** args) {
   loadLevels();
-  levelOne->test();
-  populateMap(); // Easiest way to switch maps for testing
+  currentLevel = levelOne;
   SDL_Event e;
   SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -116,30 +95,39 @@ int main(int argc, char** args) {
 void handleKeyboardInput(SDL_Event e){
    int nextCoords;
   switch(e.key.keysym.sym){
+  // Maybe use a bool canMove?
     case SDLK_RIGHT:
               nextCoords = playerY*mapX+playerX+1;
-              if(map[nextCoords]==0 && playerX < mapX -1){
-                    playerX += 1;
-                    playerDirection = "right";
+              if(nextCoords < currentLevel->height*currentLevel->width ){
+                if(currentLevel->floorMap.at(nextCoords)==0 && playerX < mapX -1){
+                      playerX += 1;
+                      playerDirection = "right";
+                }
               }
              break;
     case SDLK_LEFT:
               nextCoords = playerY*mapX+playerX-1;
-              if(map[nextCoords]==0 && playerX > 0){
-                    playerX -= 1;
-                    playerDirection = "left";
+              if(nextCoords > -1){
+                if(currentLevel->floorMap.at(nextCoords) ==0 && playerX > 0){
+                      playerX -= 1;
+                      playerDirection = "left";
+                }
               }
               break;
     case SDLK_UP:
               nextCoords = (playerY-1)*mapX+playerX;
-              if(map[nextCoords]==0 && playerY > 0){
-                    playerY -= 1;
+              if(nextCoords > 0){
+                if(currentLevel->floorMap.at(nextCoords) ==0 && playerY > 0){
+                      playerY -= 1;
+                }
               }
               break;
     case SDLK_DOWN:
               nextCoords = (playerY+1)*mapX+playerX;
-              if(map[nextCoords]==0 && playerY < mapY -1){
-                    playerY += 1;
+              if(nextCoords < currentLevel->height*currentLevel->width){
+                if(currentLevel->floorMap.at(nextCoords) ==0 && playerY < mapY -1){
+                      playerY += 1;
+                }
               } 
               break;
   }
@@ -199,15 +187,15 @@ void drawMap(){
         // 2 -> dirt
 
       if(inMap){
-        if(map[currentTile]==1){
+           if(currentLevel->floorMap.at(currentTile)==1){
            SDL_Rect dirtAtlasCoords {0, 256,256,256};
            SDL_RenderCopy(renderer,atlasTex,&dirtAtlasCoords,&currentTileDimensions);
         }
-        else if(map[currentTile] == 2){
+        else if(currentLevel->floorMap.at(currentTile) == 2){
            SDL_Rect grassAtlasCoords {0, 0,256,256};
            SDL_RenderCopy(renderer,atlasTex,&grassAtlasCoords,&currentTileDimensions);
         }
-        else if(map[currentTile] == 3){
+        else if(currentLevel->floorMap.at(currentTile) == 3){
            SDL_Rect grassTopAtlasCoords {256, 0,256,256};
            SDL_RenderCopy(renderer,atlasTex,&grassTopAtlasCoords,&currentTileDimensions);
         }
@@ -256,7 +244,7 @@ void checkCakeCollision(){
 
 void newCake(){
     int newCakelocation = rand() %64;
-    while(map[newCakelocation] != 0){
+    while(currentLevel->floorMap.at(newCakelocation) != 0){
       newCakelocation = rand() %64;
     }
     cakeLocation = newCakelocation;
@@ -279,7 +267,7 @@ void drawScore(){
   
 }
 
-// Extract?
+// Extract to own cpp file?
 void loadLevels(){
   loadLevelOne();
 }

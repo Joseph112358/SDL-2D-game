@@ -10,10 +10,10 @@
 
 // Possibly pass in a map signature then reference somewhere?
 Level::Level(int width, int height, std::vector<int> floorMap,std::vector<int> itemMap){
-   width = width;
-   height = height;
-   floorMap = floorMap;
-   itemMap = itemMap;
+   this->width = width;
+   this->height = height;
+   this->floorMap = floorMap;
+   this->itemMap = itemMap;
 }
 
 int Level::getMapX(){
