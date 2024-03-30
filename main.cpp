@@ -24,12 +24,12 @@ SDL_Texture* playerTex = nullptr;
 SDL_Texture* cakeTex = nullptr;
 SDL_Texture* scoreTex = nullptr;
 Level* levelOne = nullptr;
+Level* levelTwo = nullptr;
 Level* currentLevel = nullptr;
 
 // length of x is important for rendering maths.
-// x = 16 
-int mapX = 8;
-int mapY = 8;
+int mapX;
+int mapY;
 
 
 void handleKeyboardInput(SDL_Event e);
@@ -41,11 +41,14 @@ void newCake();
 void drawScore();
 void loadLevels();
 void loadLevelOne();
+void loadLevelTwo();
 
 
 int main(int argc, char** args) {
   loadLevels();
-  currentLevel = levelOne;
+  currentLevel = levelTwo;
+  mapX = currentLevel->mapX;
+  mapY = currentLevel->mapY;
   SDL_Event e;
   SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -98,7 +101,7 @@ void handleKeyboardInput(SDL_Event e){
   // Maybe use a bool canMove?
     case SDLK_RIGHT:
               nextCoords = playerY*mapX+playerX+1;
-              if(nextCoords < currentLevel->height*currentLevel->width ){
+              if(nextCoords < currentLevel->mapY*currentLevel->mapX ){
                 if(currentLevel->floorMap.at(nextCoords)==0 && playerX < mapX -1){
                       playerX += 1;
                       playerDirection = "right";
@@ -116,7 +119,7 @@ void handleKeyboardInput(SDL_Event e){
               break;
     case SDLK_UP:
               nextCoords = (playerY-1)*mapX+playerX;
-              if(nextCoords > 0){
+              if(nextCoords > -1){
                 if(currentLevel->floorMap.at(nextCoords) ==0 && playerY > 0){
                       playerY -= 1;
                 }
@@ -124,14 +127,13 @@ void handleKeyboardInput(SDL_Event e){
               break;
     case SDLK_DOWN:
               nextCoords = (playerY+1)*mapX+playerX;
-              if(nextCoords < currentLevel->height*currentLevel->width){
+              if(nextCoords < currentLevel->mapY*currentLevel->mapX){
                 if(currentLevel->floorMap.at(nextCoords) ==0 && playerY < mapY -1){
                       playerY += 1;
                 }
               } 
               break;
   }
-
 }
 
 // Rendering
@@ -176,7 +178,7 @@ void drawMap(){
 
         
         bool inMap = true;
-        if(currentTileX > 7 || currentTileX < 0 || currentTileY > 7 || currentTileY < 0) inMap = false;
+        if(currentTileX > currentLevel->mapX -1 || currentTileX < 0 || currentTileY > currentLevel->mapY -1 || currentTileY < 0) inMap = false;
        
 
       SDL_Rect currentTileDimensions {currentSquareX, currentSquareY,64,64};
@@ -219,7 +221,7 @@ void drawCakes(){
   tmpSurface = IMG_Load("cake-candle-sprite.png");
   // Where is the cake?
   int cakeX = (cakeLocation % mapX);
-  int cakeY = (cakeLocation / mapY);
+  int cakeY = (cakeLocation / mapX);
   int differenceX = cakeX - playerX;
   int differenceY = cakeY - playerY;
   // Is it in range / site ? (should it be drawn)
@@ -237,17 +239,19 @@ void drawCakes(){
 void checkCakeCollision(){
   if(cakeLocation == playerX + mapX*playerY){
     score ++;
-    std::cout << score << std::endl;
     newCake();
   }
 }
 
 void newCake(){
-    int newCakelocation = rand() %64;
+    int mapSize = currentLevel->mapX*currentLevel->mapY;
+    int newCakelocation = rand()%mapSize;
     while(currentLevel->floorMap.at(newCakelocation) != 0){
-      newCakelocation = rand() %64;
+      newCakelocation = rand()%mapSize;
     }
     cakeLocation = newCakelocation;
+    int cakeX = newCakelocation%currentLevel->mapX;
+    int cakeY = newCakelocation/currentLevel->mapY;
 }
 
 // The score atlas is wrong -> start at 0
@@ -260,7 +264,6 @@ void drawScore(){
   SDL_Rect numberAtlasCoords {atlasX *32, atlasY * 32,32,32};
   SDL_Rect scoreLocation {384, 384,64,64};
   SDL_RenderCopy(renderer,scoreTex,&numberAtlasCoords,&scoreLocation);
-  //  SDL_RenderCopy(renderer,playerTex, &playerSpriteCoords,&player);
 
   SDL_DestroyTexture(scoreTex);
   SDL_FreeSurface(tmpSurface);
@@ -270,6 +273,7 @@ void drawScore(){
 // Extract to own cpp file?
 void loadLevels(){
   loadLevelOne();
+  loadLevelTwo();
 }
 
 void loadLevelOne(){
@@ -280,7 +284,7 @@ void loadLevelOne(){
   0,0,0,2,0,2,3,0,
   0,0,0,1,0,1,0,0,
   0,0,0,1,0,1,0,0,
-  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0, 
   0,0,0,0,0,0,0,0};
 
    std::vector<int> itemMap = 
@@ -293,6 +297,30 @@ void loadLevelOne(){
   0,0,0,0,0,0,0,0,
   0,0,0,0,0,0,0,0};
   levelOne = new Level(8,8, floorMap, itemMap);
+}
+
+
+void loadLevelTwo(){
+  std::vector<int> floorMap = 
+ {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+
+   std::vector<int> itemMap = 
+ {0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0};
+  levelTwo = new Level(16,8, floorMap, itemMap);
 }
 
 // command to compile
