@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include "Level.h"
+#include "Levels.h"
 
 const int WIDTH = 512, HEIGHT = 512, middleOfScreen = 192;
 
@@ -26,6 +27,7 @@ SDL_Texture* scoreTex = nullptr;
 Level* levelOne = nullptr;
 Level* levelTwo = nullptr;
 Level* currentLevel = nullptr;
+Levels * levels = nullptr;
 
 // length of x is important for rendering maths.
 int mapX;
@@ -39,16 +41,11 @@ void drawCakes();
 void checkCakeCollision();
 void newCake();
 void drawScore();
-void loadLevels();
-void loadLevelOne();
-void loadLevelTwo();
+void startGame();
 
 
 int main(int argc, char** args) {
-  loadLevels();
-  currentLevel = levelTwo;
-  mapX = currentLevel->mapX;
-  mapY = currentLevel->mapY;
+  startGame();
   SDL_Event e;
   SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -61,6 +58,15 @@ int main(int argc, char** args) {
   int frameTime;
 
   while(running){
+     if(score > 3){
+    // Check endgame conditions (finished all levels)
+    levels->incrementLevel(); // is this even necessary?
+    currentLevel = levels->getCurrentLevel();
+    score = 0;
+    playerX = 0, playerY = 0;
+    mapX = currentLevel->mapX;
+    mapY = currentLevel->mapY;
+  }
 
     frameStart = SDL_GetTicks();
 
@@ -270,57 +276,11 @@ void drawScore(){
   
 }
 
-// Extract to own cpp file?
-void loadLevels(){
-  loadLevelOne();
-  loadLevelTwo();
-}
-
-void loadLevelOne(){
-  std::vector<int> floorMap = 
- {0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,2,0,2,3,0,
-  0,0,0,1,0,1,0,0,
-  0,0,0,1,0,1,0,0,
-  0,0,0,0,0,0,0,0, 
-  0,0,0,0,0,0,0,0};
-
-   std::vector<int> itemMap = 
- {0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0};
-  levelOne = new Level(8,8, floorMap, itemMap);
-}
-
-
-void loadLevelTwo(){
-  std::vector<int> floorMap = 
- {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
-
-   std::vector<int> itemMap = 
- {0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0};
-  levelTwo = new Level(16,8, floorMap, itemMap);
+void startGame(){
+  levels = new Levels();
+  currentLevel = levels->getCurrentLevel();
+  mapX = currentLevel->mapX;
+  mapY = currentLevel->mapY;
 }
 
 // command to compile

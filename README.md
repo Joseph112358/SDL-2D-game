@@ -18,13 +18,10 @@ Level ideas, find the cake slices? ->
 -- Once done, confetti + celebration, not enough slices for everyone
 -- Player has to go to back room to find more -> level 2
 
-Level 2 repair animatronics?
 
 TODO:
-* Create a level class / data object to store level data (room layout etc)
-* Migrate static arrays to dynamic array (vector probably)
 * Clean / order code: create res folder etc
-* Create 2 levels (level 2 will be farming game)
+* Create 2 levels (level 2 will be farming game maybe?)
 * Detail room with chairs and tables,
 * Add NPC's
 
