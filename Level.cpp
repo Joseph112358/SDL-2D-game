@@ -8,7 +8,6 @@
     // Objects in room
     // Aspirational: Room dimensions
 
-// Possibly pass in a map signature then reference somewhere?
 Level::Level(int mapX, int mapY, std::vector<int> floorMap,std::vector<int> itemMap){
    this->mapX = mapX;
    this->mapY = mapY;
@@ -19,6 +18,3 @@ Level::Level(int mapX, int mapY, std::vector<int> floorMap,std::vector<int> item
 int Level::getMapX(){
    return mapX;
 }
- void Level::test(){
-            std::cout << "test for level" << std::endl;
-        }

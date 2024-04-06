@@ -15,8 +15,8 @@ LIBRARY_PATHS = -LC:\Dev\SDL-for-Mingw\SDL2-2.30.0\i686-w64-mingw32\lib -LC:\Dev
 # #LINKER_FLAGS specifies the libraries we're linking against
 LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
 
-game: main.cpp Level.cpp Level.h
-	$(CC) -o game Level.cpp main.cpp $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) 
+game: main.cpp Level.cpp Level.h Levels.cpp Levels.h
+	$(CC) -o game Levels.cpp Level.cpp main.cpp $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(LINKER_FLAGS) 
 
 clean: 
 	del *.o Level main game.exe
