@@ -9,6 +9,7 @@ Makefile used as a build tool
 Most of development done using VS code.
 
 Running the program (WIP)
+Either run the exe with the SDL2 dll or compile it yourself (exe not currently included)
 
 Ideas (WIP): This is just for me to brainstorm what I want to implement some fun levels and features in the game
 
@@ -20,11 +21,11 @@ Level ideas, find the cake slices? ->
 
 
 TODO:
-* Clean / order code: create res folder etc
-* Create 2 levels (level 2 will be farming game maybe?)
+* Finish levels
+* Create a main menu
 * Detail room with chairs and tables,
 * Add NPC's
 
 Retrospective (WIP)
 
-Whilst the rendering system I have used works (and was mostly desgined myself). It is not scalable or optimal
+tl;dr I'm not going to develop this game much further, it was mainly a fun little project for me to learn SDL 2 with. That being said, I am going to start a new 2D game project, even bigger and better than this one, carrying over skills and lessons learnt from this project. The new game will include better windowing (fullscreen), better animations, plus a more fleshed out world (NPC's, sound, interactable objects, Shadows?😳?) giving the player greater agency.
