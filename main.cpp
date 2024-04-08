@@ -66,6 +66,7 @@ int main(int argc, char** args) {
     playerX = 0, playerY = 0;
     mapX = currentLevel->mapX;
     mapY = currentLevel->mapY;
+    newCake();
   }
 
     frameStart = SDL_GetTicks();
@@ -145,7 +146,7 @@ void handleKeyboardInput(SDL_Event e){
 // Rendering
 
 void drawPlayer(){
-  tmpSurface = IMG_Load("kid-with-balloon-2.png");
+  tmpSurface = IMG_Load("res/kid-with-balloon-2.png");
   playerTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
   SDL_Rect playerSpriteCoords;
   if(playerDirection == "right"){
@@ -169,7 +170,7 @@ void drawPlayer(){
 
 // Work out where to draw, then what to draw.
 void drawMap(){
-  tmpSurface = IMG_Load("Atlas3.png");
+  tmpSurface = IMG_Load("res/Atlas3.png");
   for(int i = -2; i <3; i++){
     for(int j = -2; j <3;j++){
       atlasTex = SDL_CreateTextureFromSurface(renderer, tmpSurface); // try to move?
@@ -224,7 +225,7 @@ void drawMap(){
 }
 
 void drawCakes(){
-  tmpSurface = IMG_Load("cake-candle-sprite.png");
+  tmpSurface = IMG_Load("res/cake-candle-sprite.png");
   // Where is the cake?
   int cakeX = (cakeLocation % mapX);
   int cakeY = (cakeLocation / mapX);
@@ -263,7 +264,7 @@ void newCake(){
 // The score atlas is wrong -> start at 0
 void drawScore(){
   if(score > 10) return;
-  tmpSurface = IMG_Load("numbers-sprite-01.png");
+  tmpSurface = IMG_Load("res/numbers-sprite-01.png");
   scoreTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
   int atlasX = score % 5;
   int atlasY = score / 5;
